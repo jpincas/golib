@@ -132,7 +132,7 @@ func OptionalDecode(w http.ResponseWriter, r *http.Request, target interface{}) 
 		return nil
 	}
 
-	_, err := TryDecodeBody(w, r, target)
+	_, err := TryDecodeRequestBody(r, target)
 	return err
 }
 
