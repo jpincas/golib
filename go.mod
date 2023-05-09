@@ -1,4 +1,4 @@
-module github.com/jpincas/lib
+module github.com/yagniltd/golib
 
 go 1.20
 

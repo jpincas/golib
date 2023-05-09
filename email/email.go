@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/jpincas/lib/str"
+	"github.com/yagniltd/golib/str"
 )
 
 const (
