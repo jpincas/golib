@@ -1,9 +1,12 @@
-package request
+package web
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/go-chi/chi"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -133,20 +136,8 @@ func OptionalDecode(w http.ResponseWriter, r *http.Request, target interface{}) 
 		return nil
 	}
 
-	_, err := TryDecode(w, r, target)
+	_, err := TryDecodeBody(w, r, target)
 	return err
-}
-
-func TryDecode(w http.ResponseWriter, r *http.Request, target interface{}) (string, error) {
-	b, err := request.TryDecodeBody(w, r, target)
-	// We used to have logging here but its way too chatty given that it ends up logging
-	// all sorts of low level stream errors
-	if err != nil {
-		RespondBadRequest(w, core.SimpleValidationFromError(err))
-		return string(b), err
-	}
-
-	return string(b), nil
 }
 
 func GetURLParam(r *http.Request, s string) string {
@@ -164,17 +155,17 @@ func MustGetURLParam(r *http.Request, s string) (string, error) {
 	return param, err
 }
 
-func MustGetURLIDParam(r *http.Request, s string) (core.EntityID, error) {
+func MustGetURLIDParam(r *http.Request, s string) (primitive.ObjectID, error) {
 	param := GetURLParam(r, s)
 
 	if param == "" {
-		return core.EntityID{}, fmt.Errorf("the url paramater %s was not present", s)
+		return primitive.ObjectID{}, fmt.Errorf("the url paramater %s was not present", s)
 	}
 
 	eid, err := primitive.ObjectIDFromHex(param)
 	if err != nil {
-		return core.EntityID{}, err
+		return eid, err
 	}
 
-	return core.EntityID(eid), nil
+	return eid, nil
 }

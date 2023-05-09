@@ -8,7 +8,7 @@ cd email
 go test -v
 cd ..
 
-cd url
+cd web
 go test -v
 cd ..
 
@@ -21,10 +21,6 @@ go test -v
 cd ..
 
 cd str
-go test -v
-cd ..
-
-cd postcode
 go test -v
 cd ..
 

@@ -1,4 +1,4 @@
-package url
+package web
 
 import "strings"
 

@@ -1,4 +1,4 @@
-package common
+package web
 
 import (
 	"encoding/csv"
@@ -78,6 +78,12 @@ func RespondNothing(w http.ResponseWriter, status int) {
 	w.WriteHeader(status)
 }
 
+func RespondError(w http.ResponseWriter, err error, status int) {
+	w.Header().Set(ContentType, ApplicationJSON)
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(err)
+}
+
 func RespondOKWithCount(w http.ResponseWriter, content interface{}, count int64) {
 	w.Header().Set(ListCount, fmt.Sprintf("%v", count))
 	RespondOK(w, content)
@@ -91,7 +97,7 @@ func RespondCSVEntityList(w http.ResponseWriter, records [][]string, filename st
 	csvWriter.WriteAll(records) // calls Flush internally
 
 	if err := csvWriter.Error(); err != nil {
-		respondError(w, core.NewSimpleValidationError(err.Error()), http.StatusInternalServerError)
+		RespondError(w, err, http.StatusInternalServerError)
 	}
 }
 
@@ -104,6 +110,10 @@ func RespondFile(w http.ResponseWriter, filename, extension, contentType string,
 	w.Header().Set(ContentType, contentType)
 	w.Header().Set(ContentLength, strconv.Itoa(len(contents)))
 	w.Write(contents)
+}
+
+type BasicAuthCredentials struct {
+	Username, Password, Realm string
 }
 
 func RespondBasicAuthUnauthorized(w http.ResponseWriter, credentials *BasicAuthCredentials) {
