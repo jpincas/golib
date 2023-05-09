@@ -83,11 +83,7 @@ func TryDecodeRequestBody(r *http.Request, target interface{}) ([]byte, error) {
 	return b, nil
 }
 
-func TryDecodeBody(w http.ResponseWriter, r *http.Request, target interface{}) ([]byte, error) {
-	return TryDecodeRequestBody(r, target)
-}
-
-func TryDecodeBodyCopy(w http.ResponseWriter, r *http.Request, target interface{}) ([]byte, error) {
+func TryDecodeBodyCopy(r *http.Request, target interface{}) ([]byte, error) {
 	if r.Body == nil {
 		return []byte{}, errors.New("empty body request")
 	}
