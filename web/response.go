@@ -84,6 +84,18 @@ func RespondError(w http.ResponseWriter, err error, status int) {
 	json.NewEncoder(w).Encode(err)
 }
 
+func RespondBadRequest(w http.ResponseWriter, err error) {
+	RespondError(w, err, http.StatusBadRequest)
+}
+
+func RespondUnauthorized(w http.ResponseWriter, err error) {
+	RespondError(w, err, http.StatusUnauthorized)
+}
+
+func RespondNotFound(w http.ResponseWriter, err error) {
+	RespondError(w, err, http.StatusNotFound)
+}
+
 func RespondOKWithCount(w http.ResponseWriter, content interface{}, count int64) {
 	w.Header().Set(ListCount, fmt.Sprintf("%v", count))
 	RespondOK(w, content)
