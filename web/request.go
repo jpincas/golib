@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-chi/chi"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strings"
+
+	"github.com/go-chi/chi"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func GetFormValue(r *http.Request, key string) string {
@@ -60,7 +61,7 @@ func TryDecodeResponseBody(r *http.Response, target interface{}) ([]byte, error)
 	return b, nil
 }
 
-func TryDecodeRequestBody(r *http.Request, target interface{}) ([]byte, error) {
+func ReadRequestBody(r *http.Request) ([]byte, error) {
 	if r.Body == nil {
 		return []byte{}, errors.New("empty body request")
 	}
@@ -74,6 +75,15 @@ func TryDecodeRequestBody(r *http.Request, target interface{}) ([]byte, error) {
 
 	if b == nil {
 		return b, errors.New("empty body request")
+	}
+
+	return b, nil
+}
+
+func TryDecodeRequestBody(r *http.Request, target interface{}) ([]byte, error) {
+	b, err := ReadRequestBody(r)
+	if err != nil {
+		return b, err
 	}
 
 	if err := json.Unmarshal(b, target); err != nil {
@@ -84,27 +94,12 @@ func TryDecodeRequestBody(r *http.Request, target interface{}) ([]byte, error) {
 }
 
 func TryDecodeBodyCopy(r *http.Request, target interface{}) ([]byte, error) {
-	if r.Body == nil {
-		return []byte{}, errors.New("empty body request")
-	}
-
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-
+	b, err := TryDecodeRequestBody(r, target)
 	if err != nil {
 		return b, err
 	}
 
-	if b == nil {
-		return b, errors.New("empty body request")
-	}
-
-	if err := json.Unmarshal(b, target); err != nil {
-		return b, err
-	}
-
 	r.Body = ioutil.NopCloser(bytes.NewBuffer(b))
-
 	return b, nil
 }
 
