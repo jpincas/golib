@@ -72,7 +72,7 @@ func (ep EmailPerson) single() EmailPersons {
 
 type CCEmailList []str.CleanString
 
-func (ccs CCEmailList) toEmailPersonList() (emailPersons EmailPersons) {
+func (ccs CCEmailList) ToEmailPersonList() (emailPersons EmailPersons) {
 	for _, cc := range ccs {
 		emailPersons = append(emailPersons, singleEmailPersonWithNoName(cc))
 	}
