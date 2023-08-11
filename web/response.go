@@ -31,7 +31,7 @@ const (
 )
 
 type APIError struct {
-	ErrorMessage error `json:"errorMessage"`
+	ErrorMessage string `json:"errorMessage"`
 }
 
 // Response Helpers
@@ -85,7 +85,7 @@ func RespondNothing(w http.ResponseWriter, status int) {
 func RespondError(w http.ResponseWriter, err error, status int) {
 	w.Header().Set(ContentType, ApplicationJSON)
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(APIError{err})
+	json.NewEncoder(w).Encode(APIError{err.Error()})
 }
 
 func RespondBadRequest(w http.ResponseWriter, err error) {
