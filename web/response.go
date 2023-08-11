@@ -30,6 +30,10 @@ const (
 	TXT = "txt"
 )
 
+type APIError struct {
+	ErrorMessage error `json:"errorMessage"`
+}
+
 // Response Helpers
 
 func attachment(filename, extension string) string {
@@ -81,7 +85,7 @@ func RespondNothing(w http.ResponseWriter, status int) {
 func RespondError(w http.ResponseWriter, err error, status int) {
 	w.Header().Set(ContentType, ApplicationJSON)
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(err)
+	json.NewEncoder(w).Encode(APIError{err})
 }
 
 func RespondBadRequest(w http.ResponseWriter, err error) {
